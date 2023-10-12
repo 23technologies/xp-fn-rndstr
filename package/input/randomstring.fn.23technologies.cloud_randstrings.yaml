@@ -37,6 +37,8 @@ spec:
                       type: string
                     name:
                       type: string
+                    prefix:
+                      type: string
                   required:
                   - fieldPath
                   - name

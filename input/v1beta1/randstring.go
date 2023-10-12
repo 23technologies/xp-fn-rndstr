@@ -34,6 +34,7 @@ type Config struct {
 type Object struct {
 	Name      string `json:"name"`
 	FieldPath string `json:"fieldPath"`
+	Prefix    string `json:"prefix,omitempty"`
 }
 
 type RandomString struct {

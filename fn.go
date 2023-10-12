@@ -48,11 +48,11 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 		return nil, err
 	}
 
-	b := make([]byte, in.Cfg.RandStr.Length)
+	b := make([]byte, in.Cfg.RandStr.Length/2)
 	if _, err := rand.Read(b); err != nil {
 		panic(err)
 	}
-	randString := fmt.Sprintf("%X", b)
+	randString := fmt.Sprintf("%x", b)
 
 	for _, obj := range in.Cfg.Objs {
 		if observed[resource.Name(obj.Name)].Resource != nil {
@@ -65,7 +65,12 @@ func (f *Function) RunFunction(_ context.Context, req *fnv1beta1.RunFunctionRequ
 				return nil, err
 			}
 		}
-		patchFieldValueToObject(obj.FieldPath, randString, desired[resource.Name(obj.Name)].Resource)
+		if observed[resource.Name(obj.Name)].Resource == nil && obj.Prefix != "" {
+			patchFieldValueToObject(obj.FieldPath, obj.Prefix+randString, desired[resource.Name(obj.Name)].Resource)
+		} else {
+			patchFieldValueToObject(obj.FieldPath, randString, desired[resource.Name(obj.Name)].Resource)
+		}
+
 	}
 
 	response.SetDesiredComposedResources(rsp, desired)
